@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CSE Commons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF0EA;
+    --bg-elevated: #FFFFFF;
+    --bg-sunken: #E4E7DF;
+    --ink: #171B22;
+    --ink-soft: #5B6470;
+    --ink-faint: #8A92A0;
+    --navy: #16223A;
+    --navy-soft: #26375C;
+    --brass: #B4832A;
+    --brass-strong: #96691B;
+    --brass-tint: #F1E3C4;
+    --teal: #3B7367;
+    --teal-tint: #DCEAE5;
+    --clay: #A85436;
+    --clay-tint: #F1DED4;
+    --border: #D6D9CE;
+    --border-soft: #E3E5DC;
+    --focus: #2D64D6;
+    --radius-s: 6px;
+    --radius-m: 10px;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #14181F;
+      --bg-elevated: #1C222C;
+      --bg-sunken: #0F1319;
+      --ink: #EDEFF2;
+      --ink-soft: #A7AEB9;
+      --ink-faint: #6C7482;
+      --navy: #C7D2E8;
+      --navy-soft: #9FB0D4;
+      --brass: #E0B45C;
+      --brass-strong: #F0CC85;
+      --brass-tint: #3A311D;
+      --teal: #7FBBAC;
+      --teal-tint: #1C2E29;
+      --clay: #E08D6E;
+      --clay-tint: #33221C;
+      --border: #2B323E;
+      --border-soft: #232933;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14181F;
+    --bg-elevated: #1C222C;
+    --bg-sunken: #0F1319;
+    --ink: #EDEFF2;
+    --ink-soft: #A7AEB9;
+    --ink-faint: #6C7482;
+    --navy: #C7D2E8;
+    --navy-soft: #9FB0D4;
+    --brass: #E0B45C;
+    --brass-strong: #F0CC85;
+    --brass-tint: #3A311D;
+    --teal: #7FBBAC;
+    --teal-tint: #1C2E29;
+    --clay: #E08D6E;
+    --clay-tint: #33221C;
+    --border: #2B323E;
+    --border-soft: #232933;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  a { color: inherit; }
+  button { font-family: inherit; }
+  ::selection { background: var(--brass-tint); }
+
+  .app {
+    display: grid;
+    grid-template-columns: 258px minmax(0,1fr) 280px;
+    max-width: 1280px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 22px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-height: 100vh;
+    background: var(--bg);
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 0 4px;
+  }
+  .brand-mark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 21px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .brand-dept {
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+  .nav-search {
+    position: relative;
+  }
+  .nav-search input {
+    width: 100%;
+    padding: 9px 12px 9px 32px;
+    border-radius: var(--radius-s);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--ink);
+    font-size: 13.5px;
+  }
+  .nav-search input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+  }
+  .nav-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5; width: 14px; height: 14px; }
+
+  .nav-group { display: flex; flex-direction: column; gap: 1px; }
+  .nav-group-label {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    font-weight: 600;
+    padding: 8px 8px 4px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 8px;
+    border-radius: var(--radius-s);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+  .nav-item:hover { background: var(--bg-sunken); color: var(--ink); }
+  .nav-item.active { background: var(--navy); color: #fff; }
+  .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .nav-item .count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+  .nav-item.active .count { color: rgba(255,255,255,0.65); }
+
+  .sidebar-foot {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 8px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--brass-tint);
+    color: var(--brass-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 12px; flex-shrink: 0;
+  }
+  .sidebar-foot .who { font-size: 12.5px; }
+  .sidebar-foot .who b { display: block; font-size: 13px; color: var(--ink); }
+  .sidebar-foot .who span { color: var(--ink-faint); }
+
+  /* ---------- Main ---------- */
+  .main {
+    border-right: 1px solid var(--border);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .main-header {
+    padding: 18px 26px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    background: var(--bg);
+    z-index: 5;
+  }
+  .main-header h1 {
+    font-family: var(--font-display);
+    font-size: 23px;
+    font-weight: 600;
+    margin: 0 0 3px;
+    color: var(--ink);
+  }
+  .main-header p { margin: 0; font-size: 13px; color: var(--ink-faint); }
+
+  .composer {
+    margin: 18px 26px 6px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 14px 16px;
+  }
+  .composer-top { display: flex; gap: 10px; align-items: flex-start; }
+  .composer textarea {
+    flex: 1;
+    border: none;
+    background: none;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    min-height: 22px;
+    padding: 5px 0;
+    line-height: 1.5;
+  }
+  .composer textarea:focus-visible { outline: none; }
+  .composer textarea::placeholder { color: var(--ink-faint); }
+  .composer-bottom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .type-pill {
+    font-size: 12px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .type-pill.active[data-type="question"] { background: var(--teal-tint); border-color: var(--teal); color: var(--teal); }
+  .type-pill.active[data-type="discussion"] { background: var(--brass-tint); border-color: var(--brass); color: var(--brass-strong); }
+  .type-pill.active[data-type="event"] { background: var(--clay-tint); border-color: var(--clay); color: var(--clay); }
+  .composer-post {
+    margin-left: auto;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: var(--radius-s);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .composer-post:disabled { opacity: 0.4; cursor: default; }
+  .composer-post:hover:not(:disabled) { background: var(--navy-soft); }
+  .composer-channel {
+    font-size: 12px;
+    color: var(--ink-faint);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    padding: 5px 8px;
+    background: var(--bg);
+  }
+
+  .feed { padding: 8px 26px 60px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+
+  .post {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 15px 17px;
+  }
+  .post[data-type="question"] { border-left-color: var(--teal); }
+  .post[data-type="discussion"] { border-left-color: var(--brass); }
+  .post[data-type="event"] { border-left-color: var(--clay); }
+  .post-head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+  .post-head .avatar { width: 26px; height: 26px; font-size: 11px; }
+  .post-meta { font-size: 12.5px; line-height: 1.3; }
+  .post-meta .name { font-weight: 600; color: var(--ink); }
+  .post-meta .sub { color: var(--ink-faint); }
+  .post-meta .sub .chan { color: var(--ink-soft); }
+  .solved-badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--teal);
+    background: var(--teal-tint);
+    padding: 3px 9px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .post-title { font-size: 15px; font-weight: 600; margin: 0 0 4px; color: var(--ink); }
+  .post-body { font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; margin: 0 0 12px; }
+  .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: -4px 0 10px; }
+  .tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: var(--radius-s);
+    background: var(--bg-sunken);
+    color: var(--ink-soft);
+  }
+  .post-actions { display: flex; align-items: center; gap: 4px; }
+  .action-btn {
+    display: flex; align-items: center; gap: 5px;
+    border: none; background: none; cursor: pointer;
+    padding: 6px 9px; border-radius: var(--radius-s);
+    font-size: 12.5px; color: var(--ink-faint);
+  }
+  .action-btn:hover { background: var(--bg-sunken); color: var(--ink-soft); }
+  .action-btn.upvoted { color: var(--teal); }
+  .action-btn.upvoted svg { fill: var(--teal); }
+  .action-btn svg { width: 15px; height: 15px; }
+  .action-btn.mark-solved { margin-left: auto; }
+  .action-btn.mark-solved:hover { background: var(--teal-tint); color: var(--teal); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-faint);
+  }
+  .empty-state svg { opacity: 0.35; margin-bottom: 10px; }
+  .empty-state p { font-size: 13.5px; margin: 0; }
+
+  /* ---------- Right panel ---------- */
+  .rightbar {
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-height: 100vh;
+  }
+  .panel {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 14px 15px;
+  }
+  .panel h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    margin: 0 0 11px;
+  }
+  .helper-row {
+    display: flex; align-items: center; gap: 9px;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  .helper-row .avatar { width: 26px; height: 26px; font-size: 11px; }
+  .helper-row .name { font-weight: 500; }
+  .helper-row .pts { margin-left: auto; color: var(--brass-strong); font-size: 12px; font-weight: 600; }
+  .event-row { padding: 8px 0; border-bottom: 1px solid var(--border-soft); }
+  .event-row:last-child { border-bottom: none; }
+  .event-row .when { font-size: 11px; color: var(--clay); font-weight: 600; margin-bottom: 2px; }
+  .event-row .what { font-size: 13px; color: var(--ink); }
+  .stat-line { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-soft); padding: 5px 0; }
+  .stat-line b { color: var(--ink); }
+  .online-dot { width: 7px; height: 7px; border-radius: 50%; background: #4CAF63; display: inline-block; margin-right: 6px; }
+
+  .mobile-bar { display: none; }
+
+  @media (max-width: 980px) {
+    .app { grid-template-columns: 1fr; }
+    .rightbar { display: none; }
+    .sidebar { display: none; }
+    .sidebar.open { display: flex; position: fixed; z-index: 30; background: var(--bg); width: 258px; box-shadow: 2px 0 18px rgba(0,0,0,0.15); }
+    .mobile-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 20;
+    }
+    .mobile-bar button { background: none; border: 1px solid var(--border); border-radius: var(--radius-s); padding: 6px 9px; color: var(--ink); cursor: pointer; }
+    .mobile-bar .brand-mark { font-size: 18px; }
+    .scrim { display: none; }
+    .scrim.show { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 25; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-bar">
+  <button id="menuToggle" aria-label="Open channels">☰</button>
+  <span class="brand-mark">CSE Commons</span>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">CSE Commons</span>
+    </div>
+    <div class="brand-dept" style="margin-top:-16px;">Dept. of Computer Science &amp; Engineering</div>
+
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchInput" type="text" placeholder="Search posts, courses, people">
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Home</div>
+      <button class="nav-item active" data-channel="all">
+        <span class="dot" style="background:var(--navy)"></span> Everything Feed
+      </button>
+      <button class="nav-item" data-channel="unsolved">
+        <span class="dot" style="background:var(--clay)"></span> Unsolved questions
+      </button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">📚 Course Help</div>
+      <button class="nav-item" data-channel="cse220"><span class="dot" style="background:var(--teal)"></span> CSE220 · Data Structures <span class="count">12</span></button>
+      <button class="nav-item" data-channel="cse221"><span class="dot" style="background:var(--teal)"></span> CSE221 · Algorithms <span class="count">9</span></button>
+      <button class="nav-item" data-channel="cse331"><span class="dot" style="background:var(--teal)"></span> CSE331 · Operating Systems <span class="count">6</span></button>
+      <button class="nav-item" data-channel="cse327"><span class="dot" style="background:var(--teal)"></span> CSE327 · Databases <span class="count">4</span></button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">🎓 Campus Life</div>
+      <button class="nav-item" data-channel="outdoor"><span class="dot" style="background:var(--clay)"></span> Outdoor &amp; Sports</button>
+      <button class="nav-item" data-channel="events"><span class="dot" style="background:var(--clay)"></span> Events &amp; Fests</button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">💼 Careers</div>
+      <button class="nav-item" data-channel="jobs"><span class="dot" style="background:var(--brass)"></span> Internships &amp; Jobs</button>
+      <button class="nav-item" data-channel="teammates"><span class="dot" style="background:var(--brass)"></span> Find Teammates</button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">🛍️ Marketplace</div>
+      <button class="nav-item" data-channel="marketplace"><span class="dot" style="background:var(--ink-faint)"></span> Buy &amp; Sell</button>
+      <button class="nav-item" data-channel="lostfound"><span class="dot" style="background:var(--ink-faint)"></span> Lost &amp; Found</button>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="avatar">AL</div>
+      <div class="who"><b>Alvi</b><span>CSE'24 · Batch 27</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="main-header">
+      <h1 id="headerTitle">Everything Feed</h1>
+      <p id="headerSub">Every post from every channel in your department, newest first.</p>
+    </div>
+
+    <div class="composer">
+      <div class="composer-top">
+        <div class="avatar">AL</div>
+        <textarea id="composerInput" rows="1" placeholder="Ask for help, share something, or post an update…"></textarea>
+      </div>
+      <div class="composer-bottom">
+        <button class="type-pill active" data-type="question">❔ Question</button>
+        <button class="type-pill" data-type="discussion">💬 Discussion</button>
+        <button class="type-pill" data-type="event">📅 Event</button>
+        <select class="composer-channel" id="composerChannel"></select>
+        <button class="composer-post" id="postBtn" disabled>Post</button>
+      </div>
+    </div>
+
+    <div class="feed" id="feed"></div>
+  </main>
+
+  <aside class="rightbar">
+    <div class="panel">
+      <h3><span class="online-dot"></span>142 online now</h3>
+      <div class="stat-line">Questions answered today <b>31</b></div>
+      <div class="stat-line">Avg. reply time <b>11 min</b></div>
+      <div class="stat-line">Open questions <b>18</b></div>
+    </div>
+
+    <div class="panel">
+      <h3>Top helpers this week</h3>
+      <div class="helper-row"><div class="avatar">BY</div><span class="name">Bayzed</span><span class="pts">248 pts</span></div>
+      <div class="helper-row"><div class="avatar">ET</div><span class="name">Eti</span><span class="pts">211 pts</span></div>
+      <div class="helper-row"><div class="avatar">SA</div><span class="name">Sadi</span><span class="pts">176 pts</span></div>
+      <div class="helper-row"><div class="avatar">UT</div><span class="name">Umme Tasni</span><span class="pts">150 pts</span></div>
+    </div>
+
+    <div class="panel">
+      <h3>Upcoming</h3>
+      <div class="event-row"><div class="when">TOMORROW · 5:00 PM</div><div class="what">Inter-batch Football — CSE vs EEE</div></div>
+      <div class="event-row"><div class="when">FRI · 3:00 PM</div><div class="what">CSE221 doubt-clearing session</div></div>
+      <div class="event-row"><div class="when">NEXT WEEK</div><div class="what">Tech Fest 2026 — call for volunteers</div></div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+(function(){
+  const CHANNELS = {
+    all: { label: "Everything Feed", sub: "Every post from every channel in your department, newest first." },
+    unsolved: { label: "Unsolved questions", sub: "Questions still waiting on an accepted answer." },
+    cse220: { label: "CSE220 · Data Structures", sub: "Ask and answer questions about Data Structures." },
+    cse221: { label: "CSE221 · Algorithms", sub: "Ask and answer questions about Algorithms." },
+    cse331: { label: "CSE331 · Operating Systems", sub: "Ask and answer questions about Operating Systems." },
+    cse327: { label: "CSE327 · Databases", sub: "Ask and answer questions about Databases." },
+    outdoor: { label: "Outdoor & Sports", sub: "Games, tournaments, and meetups outside the lab." },
+    events: { label: "Events & Fests", sub: "Department events, fests, and things worth showing up for." },
+    jobs: { label: "Internships & Jobs", sub: "Openings, referrals, and interview experiences from seniors." },
+    teammates: { label: "Find Teammates", sub: "Looking for a team, or looking for members? Post here." },
+    marketplace: { label: "Buy & Sell", sub: "Textbooks, calculators, laptops — department only." },
+    lostfound: { label: "Lost & Found", sub: "Left your charger in the lab again?" }
+  };
+
+  let posts = [
+    { id: 1, type: "question", channel: "cse220", solved: true, name: "Umme Tasni", init: "UT", time: "2h ago",
+      title: "Why does my AVL tree rotation break after 3 inserts?",
+      body: "I'm implementing left-right rotation and the balance factor goes wrong after the 3rd insert. Pretty sure it's in my updateHeight() call order — can someone sanity check?",
+      tags: ["AVL Tree", "Assignment 3"], up: 14, upvoted: false, comments: 6 },
+    { id: 2, type: "event", channel: "outdoor", solved: false, name: "Sadi", init: "SA", time: "3h ago",
+      title: "Inter-batch football tomorrow, 27 vs 28 — need 2 more players",
+      body: "Field is booked 5–6:30 PM near the north gate. Bring your own jersey if you have one, extras available.",
+      tags: ["Football", "Batch 27"], up: 22, upvoted: false, comments: 9 },
+    { id: 3, type: "question", channel: "cse221", solved: false, name: "Eti", init: "ET", time: "4h ago",
+      title: "Difference between memoization and tabulation in practice?",
+      body: "I get the theory but in the exam I keep freezing on which one to reach for first. Any rule of thumb you all use?",
+      tags: ["Dynamic Programming"], up: 8, upvoted: false, comments: 4 },
+    { id: 4, type: "discussion", channel: "jobs", solved: false, name: "Bayzed", init: "BY", time: "5h ago",
+      title: "Got an OA from a fintech startup — anyone interviewed there recently?",
+      body: "It's a 90-min OA on HackerRank, two DSA problems + one SQL. If anyone's done their process before I'd love a heads up on rounds after this.",
+      tags: ["Internship", "OA"], up: 11, upvoted: false, comments: 7 },
+    { id: 5, type: "question", channel: "cse331", solved: false, name: "Alvi", init: "AL", time: "6h ago",
+      title: "Confused about the difference between a race condition and deadlock",
+      body: "Our slides use both terms in the same sentence for one example and now I've mixed them up completely. Simple explanation appreciated 🙏",
+      tags: ["Concurrency", "Midterm"], up: 5, upvoted: false, comments: 3 },
+    { id: 6, type: "discussion", channel: "marketplace", solved: false, name: "Eti", init: "ET", time: "8h ago",
+      title: "Selling: Intro to Algorithms (CLRS), barely used",
+      body: "Bought it new last semester, has some highlighter marks in ch.4 only. Asking half of new price. Can meet at the CS building.",
+      tags: ["Textbook"], up: 3, upvoted: false, comments: 2 },
+    { id: 7, type: "question", channel: "cse220", solved: false, name: "Sadi", init: "SA", time: "9h ago",
+      title: "When should I use a hash map vs a TreeMap for this problem set?",
+      body: "Problem 4 says 'ordered output' but I got away with a hash map + sort at the end — is that considered bad practice here?",
+      tags: ["Hash Map", "Assignment 3"], up: 6, upvoted: false, comments: 5 },
+    { id: 8, type: "discussion", channel: "teammates", solved: false, name: "Umme Tasni", init: "UT", time: "11h ago",
+      title: "Need 1 more backend dev for the hackathon team (36h event)",
+      body: "We have frontend + design covered. Looking for someone comfortable with Node and Postgres. DM if interested, deadline to register is Thursday.",
+      tags: ["Hackathon"], up: 9, upvoted: false, comments: 6 },
+    { id: 9, type: "question", channel: "cse327", solved: true, name: "Bayzed", init: "BY", time: "1d ago",
+      title: "Normalization: is splitting this table into 3NF overkill for the project?",
+      body: "Our project only has ~5 tables total. Professor wants 3NF everywhere but it feels like premature optimization for the scope. Thoughts?",
+      tags: ["Normalization", "Project"], up: 10, upvoted: false, comments: 8 },
+    { id: 10, type: "event", channel: "events", solved: false, name: "Alvi", init: "AL", time: "1d ago",
+      title: "Tech Fest 2026 — call for volunteers, sign-up sheet inside",
+      body: "Need help with registration desk, workshop logistics, and the coding contest. Free t-shirt + food for all volunteers.",
+      tags: ["Tech Fest", "Volunteer"], up: 17, upvoted: false, comments: 12 }
+  ];
+  let nextId = 11;
+  let currentChannel = "all";
+  let currentSearch = "";
+  let composerType = "question";
+
+  const feedEl = document.getElementById("feed");
+  const headerTitle = document.getElementById("headerTitle");
+  const headerSub = document.getElementById("headerSub");
+  const composerInput = document.getElementById("composerInput");
+  const postBtn = document.getElementById("postBtn");
+  const composerChannel = document.getElementById("composerChannel");
+  const searchInput = document.getElementById("searchInput");
+
+  // populate composer channel dropdown (exclude "all"/"unsolved")
+  Object.entries(CHANNELS).forEach(([key, c]) => {
+    if (key === "all" || key === "unsolved") return;
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = c.label;
+    composerChannel.appendChild(opt);
+  });
+  composerChannel.value = "cse220";
+
+  function timeAgoLabel(){ return "just now"; }
+
+  function iconThumb(filled){
+    return '<svg viewBox="0 0 24 24" fill="'+(filled?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M7 22V11M2 13v7a2 2 0 0 0 2 2h12.4a2 2 0 0 0 2-1.7l1.4-9A2 2 0 0 0 18 9h-5V4a2 2 0 0 0-2-2L7 11"/></svg>';
+  }
+  const ICON_COMMENT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 21l1.5-5.4A8.5 8.5 0 1 1 21 11.5z"/></svg>';
+  const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+  const ICON_EMPTY = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+
+  function typeBadgeText(p){
+    if (p.type === "question") return p.solved ? "Solved" : "Open";
+    return null;
+  }
+
+  function renderPost(p){
+    const div = document.createElement("div");
+    div.className = "post";
+    div.dataset.type = p.type;
+    const chan = CHANNELS[p.channel] ? CHANNELS[p.channel].label : p.channel;
+    const badge = p.type === "question"
+      ? `<span class="solved-badge" style="${p.solved ? '' : 'color:var(--clay);background:var(--clay-tint);'}">${p.solved ? ICON_CHECK + ' Solved' : '● Open'}</span>`
+      : "";
+    div.innerHTML = `
+      <div class="post-head">
+        <div class="avatar">${p.init}</div>
+        <div class="post-meta">
+          <div class="name">${p.name}</div>
+          <div class="sub">${p.time} · <span class="chan">${chan}</span></div>
+        </div>
+        ${badge}
+      </div>
+      <h4 class="post-title">${p.title}</h4>
+      <p class="post-body">${p.body}</p>
+      <div class="post-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+      <div class="post-actions">
+        <button class="action-btn upvote ${p.upvoted ? 'upvoted' : ''}">${iconThumb(p.upvoted)} <span class="up-count">${p.up}</span></button>
+        <button class="action-btn comment">${ICON_COMMENT} <span>${p.comments}</span></button>
+        ${p.type === "question" ? `<button class="action-btn mark-solved">${p.solved ? "Mark unsolved" : "Mark solved"}</button>` : ""}
+      </div>
+    `;
+    div.querySelector(".upvote").addEventListener("click", () => {
+      p.upvoted = !p.upvoted;
+      p.up += p.upvoted ? 1 : -1;
+      renderFeed();
+    });
+    const solvedBtn = div.querySelector(".mark-solved");
+    if (solvedBtn) {
+      solvedBtn.addEventListener("click", () => {
+        p.solved = !p.solved;
+        renderFeed();
+      });
+    }
+    div.querySelector(".comment").addEventListener("click", () => {
+      p.comments += 1;
+      renderFeed();
+    });
+    return div;
+  }
+
+  function renderFeed(){
+    const meta = CHANNELS[currentChannel] || CHANNELS.all;
+    headerTitle.textContent = meta.label;
+    headerSub.textContent = meta.sub;
+
+    let list = posts.slice();
+    if (currentChannel === "unsolved") {
+      list = list.filter(p => p.type === "question" && !p.solved);
+    } else if (currentChannel !== "all") {
+      list = list.filter(p => p.channel === currentChannel);
+    }
+    if (currentSearch.trim()) {
+      const q = currentSearch.toLowerCase();
+      list = list.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.body.toLowerCase().includes(q) ||
+        p.tags.some(t => t.toLowerCase().includes(q)) ||
+        p.name.toLowerCase().includes(q)
+      );
+    }
+
+    feedEl.innerHTML = "";
+    if (list.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.innerHTML = `${ICON_EMPTY}<p>Nothing here yet. Be the first to post in this channel.</p>`;
+      feedEl.appendChild(empty);
+      return;
+    }
+    list.forEach(p => feedEl.appendChild(renderPost(p)));
+  }
+
+  // sidebar nav
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentChannel = btn.dataset.channel;
+      renderFeed();
+      closeSidebarMobile();
+    });
+  });
+
+  // search
+  searchInput.addEventListener("input", (e) => {
+    currentSearch = e.target.value;
+    renderFeed();
+  });
+
+  // composer type pills
+  document.querySelectorAll(".type-pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll(".type-pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      composerType = pill.dataset.type;
+    });
+  });
+
+  composerInput.addEventListener("input", () => {
+    postBtn.disabled = composerInput.value.trim().length === 0;
+    composerInput.style.height = "auto";
+    composerInput.style.height = composerInput.scrollHeight + "px";
+  });
+
+  postBtn.addEventListener("click", () => {
+    const text = composerInput.value.trim();
+    if (!text) return;
+    const chan = composerChannel.value;
+    const firstLine = text.split("\n")[0].slice(0, 90);
+    posts.unshift({
+      id: nextId++,
+      type: composerType,
+      channel: chan,
+      solved: false,
+      name: "Alvi",
+      init: "AL",
+      time: timeAgoLabel(),
+      title: firstLine,
+      body: text,
+      tags: [CHANNELS[chan].label.split(" · ")[0]],
+      up: 0,
+      upvoted: false,
+      comments: 0
+    });
+    composerInput.value = "";
+    composerInput.style.height = "auto";
+    postBtn.disabled = true;
+    currentChannel = "all";
+    document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+    document.querySelector('.nav-item[data-channel="all"]').classList.add("active");
+    renderFeed();
+    feedEl.scrollTop = 0;
+  });
+
+  // mobile sidebar toggle
+  const sidebar = document.getElementById("sidebar");
+  const scrim = document.getElementById("scrim");
+  document.getElementById("menuToggle").addEventListener("click", () => {
+    sidebar.classList.add("open");
+    scrim.classList.add("show");
+  });
+  function closeSidebarMobile(){
+    if (window.innerWidth <= 980) {
+      sidebar.classList.remove("open");
+      scrim.classList.remove("show");
+    }
+  }
+  scrim.addEventListener("click", closeSidebarMobile);
+
+  renderFeed();
+})();
+</script>
+</body>
+</html>
